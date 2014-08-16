@@ -1,0 +1,42 @@
+#!/usr/bin/env julia
+
+@require "docopt/src/DocOpt" docopt
+@require ".." run suite test @test @test_throws
+
+const usage = """
+
+Usage:
+  jest [--reporter=<name>] <file>...
+  jest -h | --help
+  jest -v | --version
+
+Options:
+  -h --help     Show this screen
+  -v --version  Show version
+  -r --reporter Select a custom reporter
+
+"""
+
+args = docopt(usage, version="0.0.0")
+
+for file in args["<file>"]
+	file = joinpath(pwd(), file)
+	Require.require(file; [
+		symbol("@test_throws") => eval(symbol("@test_throws")),
+		symbol("@test") => eval(symbol("@test")),
+		:suite => suite,
+		:test => test
+	]...)
+end
+
+if args["--reporter"] == nothing
+	args["--reporter"] = "dot"
+end
+
+reporter = args["--reporter"]
+reporter = Require.require("../reporters/$reporter").reporter
+
+results = run(reporter)
+
+# exit with correct error code
+exit(sum(t -> t.pass ? 0 : 1, results))

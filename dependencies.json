@@ -1,0 +1,6 @@
+{
+  "production": {
+    "docopt": "http://github.com/docopt/DocOpt.jl/tarball/master",
+    "emitter": "http://github.com/jkroso/emitter.jl/tarball/0.1.0"
+  }
+}
