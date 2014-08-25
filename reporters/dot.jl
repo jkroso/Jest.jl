@@ -13,7 +13,7 @@ const reporter = Events({
 	"before all" => function()
 		print("\e[?25l\n   ")
 	end,
-	"after all" => function(time)
+	"after all" => function(results)
 		if count == 0
 			println("No tests declared")
 			println()
@@ -26,6 +26,7 @@ const reporter = Events({
 		print("\n\n  ")
 		passes > 0 && print("$GREEN $passes passing")
 		failures > 0 && print("$RED $failures failing")
+		time = sum(n -> n.time, results)
 		println("$GRAY ($(int(time * 1000))ms)\n")
 
 		for i in [1:length(fails)]

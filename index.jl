@@ -60,8 +60,8 @@ run() = run(Events())
 run(reporter::Events) = begin
 	emit(reporter, "before all")
 	try
-		time = @elapsed results = run(stack[1], reporter)
-		emit(reporter, "after all", time)
+		results = run(stack[1], reporter)
+		emit(reporter, "after all", results)
 		results
 	catch e
 		emit(reporter, "error", e)
