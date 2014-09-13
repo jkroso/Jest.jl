@@ -11,7 +11,7 @@ count = 0
 
 const reporter = Events({
 	"before all" => function()
-		print("\e[?25l\n   ")
+		print("\n   ")
 	end,
 	"after all" => function(results)
 		if count == 0
@@ -34,7 +34,7 @@ const reporter = Events({
 		end
 		failures > 0 && println()
 
-		print("$RESET\e[?25h")
+		print("$RESET")
 	end,
 	"after test" => function(result)
 		global count += 1
