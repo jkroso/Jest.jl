@@ -1,4 +1,3 @@
-
 @require "emitter" Events emit
 
 export run, suite, test, @test, @test_throws
@@ -25,7 +24,7 @@ end
 
 const stack = Suite[Suite("")]
 
-suite(body::Function, title::String) = begin
+function suite(body::Function, title::String)
 	s = Suite(title)
 	push!(stack[end].children, s)
 	push!(stack, s)
@@ -33,8 +32,7 @@ suite(body::Function, title::String) = begin
 	pop!(stack)
 end
 
-test(body::Function, title::String) = test(body, title, Dict())
-test(body::Function, title::String, meta::Dict) = begin
+function test(body::Function, title::String, meta::Dict=Dict())
 	t = Test(body, title, meta)
 	push!(stack[end].children, t)
 	t
@@ -57,9 +55,7 @@ macro test_throws(T, expr)
 	end
 end
 
-run() = run(Events())
-
-run(reporter::Events) = begin
+function run(reporter::Events=Events())
 	emit(reporter, "before all")
 	try
 		results = run(stack[1], reporter)
@@ -71,14 +67,14 @@ run(reporter::Events) = begin
 	end
 end
 
-run(suite::Suite, reporter::Events) = begin
+function run(suite::Suite, reporter::Events)
 	emit(reporter, "before suite", suite)
 	results = map(it -> run(it, reporter), suite.children)
 	emit(reporter, "after suite", suite)
 	reduce(vcat, Result[], results)
 end
 
-run(test::Test, reporter::Events) = begin
+function run(test::Test, reporter::Events)
 	emit(reporter, "before test", test)
 	time = @elapsed ok = test.body()
 	result = Result(test, time, ok)
