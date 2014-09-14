@@ -44,15 +44,17 @@ macro test(expr)
 	:(test(() -> $(esc(expr)), $(repr(expr))))
 end
 
-macro test_throws(expr)
-	:(test($(repr(expr))) do
-		try
-			$(esc(expr))
-			false
-		catch e
-			true
+macro test_throws(T, expr)
+	quote
+		test($(repr(expr))) do
+			try
+				$(esc(expr))
+				false
+			catch e
+				isa(e, $T)
+			end
 		end
-	end)
+	end
 end
 
 run() = run(Events())

@@ -20,6 +20,6 @@ end
 suite("macros") do
 	@test 1 == 1
 	@test 1 == 2
-	@test_throws error("boom")
-	@test_throws "not throwing"
+	@test_throws Exception error("boom")
+	@test_throws Exception "not throwing"
 end
