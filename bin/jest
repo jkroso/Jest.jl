@@ -21,7 +21,7 @@ args = docopt(usage, version="0.0.0")
 
 for file in args["<file>"]
 	file = joinpath(pwd(), file)
-	Require.require(file; [
+	Requirer.require(file; [
 		symbol("@test_throws") => eval(symbol("@test_throws")),
 		symbol("@test") => eval(symbol("@test")),
 		:suite => suite,
@@ -34,7 +34,7 @@ if args["--reporter"] == nothing
 end
 
 reporter = args["--reporter"]
-reporter = Require.require("../reporters/$reporter").reporter
+reporter = Requirer.require("../reporters/$reporter").reporter
 
 results = run(reporter)
 
