@@ -26,7 +26,7 @@ const reporter = Events({
 		print("\n\n  ")
 		passes > 0 && print("$GREEN $passes passing")
 		failures > 0 && print("$RED $failures failing")
-		time = sum(n -> n.time, results)
+		time = reduce((n,r) -> n + r.time, 0, results)
 		println("$GRAY ($(int(time * 1000))ms)\n")
 
 		for i in [1:length(fails)]

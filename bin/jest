@@ -39,4 +39,4 @@ reporter = Requirer.require("../reporters/$reporter").reporter
 results = run(reporter)
 
 # exit with correct error code
-exit(sum(t -> t.pass ? 0 : 1, results))
+exit(reduce((n,t) -> n + (t.pass ? 0 : 1), 0, results))
