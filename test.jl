@@ -12,7 +12,7 @@ suite("suites should group") do
 	test(pass, "test 4")
 end
 
-suite("failiures") do
+suite("failures") do
 	test(fail, "test 1")
 	test(fail, "test 2")
 end

@@ -1,7 +1,8 @@
 #!/usr/bin/env julia
 
+@require ".." suite test reporter @test @test_throws
 @require "docopt/src/DocOpt" docopt
-@require ".." run suite test @test @test_throws
+@require "emitter" Events on emit
 
 const usage = """
 
@@ -19,24 +20,39 @@ Options:
 
 args = docopt(usage, version="0.0.0")
 
-for file in args["<file>"]
-	file = joinpath(pwd(), file)
-	Requirer.require(file; [
-		symbol("@test_throws") => eval(symbol("@test_throws")),
-		symbol("@test") => eval(symbol("@test")),
-		:suite => suite,
-		:test => test
-	]...)
-end
 
 if args["--reporter"] == nothing
-	args["--reporter"] = "dot"
+  args["--reporter"] = "dot"
 end
 
-reporter = args["--reporter"]
-reporter = Requirer.require("../reporters/$reporter").reporter
+handlers = args["--reporter"]
+handlers = Requirer.require("../reporters/$handlers").reporter
 
-results = run(reporter)
+on(reporter, handlers)
+
+fails = 0
+
+on(reporter, "after test") do result
+  global fails += !result.pass
+end
+
+emit(reporter, "before all")
+
+try
+  for file in args["<file>"]
+    file = joinpath(pwd(), file)
+    Requirer.require(file; [
+      symbol("@test_throws") => eval(symbol("@test_throws")),
+      symbol("@test") => eval(symbol("@test")),
+      :suite => suite,
+      :test => test
+    ]...)
+  end
+  emit(reporter, "after all")
+catch e
+  emit(reporter, "error", e)
+  rethrow(e)
+end
 
 # exit with correct error code
-exit(reduce((n,t) -> n + !t.pass, 0, results))
+exit(fails)
