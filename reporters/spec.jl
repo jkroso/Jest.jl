@@ -1,15 +1,11 @@
-@require "emitter" Events
-
-export reporter
-
-level = 0
 const RED   = "\x1b[31m"
 const GREEN = "\x1b[32m"
 const RESET = "\x1b[33m"
+level = 0
 
 render(msg::String) = println(" " ^ (level * 2), msg)
 
-const reporter = Events({
+const reporter = {
 	"before suite" => function(suite)
 		render("$RESET$(suite.title)")
 		global level += 1
@@ -25,4 +21,4 @@ const reporter = Events({
 			render("$(RED)✖$RESET $(result.test.title)")
 		end
 	end
-})
+}

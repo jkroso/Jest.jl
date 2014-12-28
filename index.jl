@@ -55,7 +55,7 @@ macro test_throws(T, expr)
 	end
 end
 
-function run(reporter::Events=Events())
+function run(reporter::Events)
 	emit(reporter, "before all")
 	try
 		results = run(stack[1], reporter)
@@ -81,3 +81,5 @@ function run(test::Test, reporter::Events)
 	emit(reporter, "after test", result)
 	result
 end
+
+run(reporter=Dict()) = run(Events(reporter))
