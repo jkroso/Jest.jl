@@ -1,7 +1,7 @@
 @require "emitter" Events emit
 
 type Result
-	title::String
+	title::Vector{String}
 	time::FloatingPoint
 	pass::Bool
 end
@@ -18,9 +18,10 @@ function suite(body::Function, title::String)
 end
 
 function test(body::Function, title::String)
-	emit(reporter, "before test", title)
+	full_title = vcat(stack, title)
+	emit(reporter, "before test", full_title)
 	time = @elapsed ok = body()
-	emit(reporter, "after test", Result(title, time, ok))
+	emit(reporter, "after test", Result(full_title, time, ok))
 end
 
 macro test(expr)

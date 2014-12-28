@@ -19,9 +19,9 @@ const reporter = {
 	end,
 	"after test" => function(result)
 		if result.pass
-			render("$(GREEN)✔$RESET $(result.title)")
+			render("$(GREEN)✔$RESET $(result.title[end])")
 		else
-			render("$(RED)✖$RESET $(result.title)")
+			render("$(RED)✖$RESET $(result.title[end])")
 		end
 	end
 }

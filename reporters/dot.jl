@@ -26,7 +26,8 @@ const reporter = {
 		println("$GRAY ($(int(time * 1000))ms)\n")
 
 		for i in [1:length(fails)]
-			println("$GRAY   $i)$RED $(fails[i].title)")
+			title = join(fails[i].title, ' ')
+			println("$GRAY   $i)$RED $title")
 		end
 		failures > 0 && println()
 
