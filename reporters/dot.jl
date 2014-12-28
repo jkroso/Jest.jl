@@ -1,7 +1,3 @@
-@require "emitter" Events
-
-export reporter
-
 const RED   = "\x1b[31m"
 const GREEN = "\x1b[32m"
 const GRAY = "\x1b[33m"
@@ -9,7 +5,7 @@ const RESET = "\x1b[0m"
 const fails = String[]
 count = 0
 
-const reporter = Events({
+const reporter = {
 	"before all" => function()
 		print("\n   ")
 	end,
@@ -49,4 +45,4 @@ const reporter = Events({
 		println(RESET)
 		println()
 	end
-})
+}
