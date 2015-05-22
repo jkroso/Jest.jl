@@ -1,12 +1,12 @@
-
 PREFIX?=/usr/local
+REPORTER?=dot
 
 dependencies: dependencies.json
 	@packin install --folder $@ --meta $<
-	@ln -s .. $@/jest
+	@ln -fsn .. $@/jest
 
 test: dependencies
-	@bin/jest test.jl
+	@bin/jest test.jl --reporter $(REPORTER)
 
 install: dependencies
 	mkdir -p $(PREFIX)/bin
