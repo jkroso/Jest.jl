@@ -38,7 +38,7 @@ const reporter = {
 			print("$(GREEN).")
 		else
 			print("$(RED).")
-			push!(fails, result.test.title)
+			push!(fails, title(result.test))
 		end
 	end,
 	"error" => function(e)
@@ -46,3 +46,9 @@ const reporter = {
 		println()
 	end
 }
+
+title(test) = join(title(test, String[]), " ")
+function title(s, buf)
+	isdefined(s, :parent) || return buf
+	title(s.parent, unshift!(buf, s.title))
+end
