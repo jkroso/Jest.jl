@@ -6,14 +6,17 @@ abstract Runnable
 
 immutable Suite <: Runnable
 	title::String
-	children::Array{Runnable,1}
+	children::Vector{Runnable}
+	parent::Suite
 	Suite(title) = new(title, Runnable[])
+	Suite(title, parent) = new(title, Runnable[], parent)
 end
 
 immutable Test <: Runnable
 	body::Function
 	title::String
-	meta::Dict{Any,Any}
+	meta::Dict
+	parent::Suite
 end
 
 immutable Result
@@ -25,7 +28,7 @@ end
 const stack = Suite[Suite("")]
 
 function suite(body::Function, title::String)
-	s = Suite(title)
+	s = Suite(title, stack[end])
 	push!(stack[end].children, s)
 	push!(stack, s)
 	body()
@@ -33,7 +36,7 @@ function suite(body::Function, title::String)
 end
 
 function test(body::Function, title::String, meta::Dict=Dict())
-	t = Test(body, title, meta)
+	t = Test(body, title, meta, stack[end])
 	push!(stack[end].children, t)
 	t
 end
