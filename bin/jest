@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
 
-@require "docopt/src/DocOpt" docopt
+import DocOpt.docopt
 @require ".." run suite test @test @test_throws
 
 const usage = """
