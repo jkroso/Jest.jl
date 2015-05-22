@@ -1,7 +1,5 @@
 @require "emitter" Events emit
 
-export run, suite, test, @test, @test_throws
-
 abstract Runnable
 
 immutable Suite <: Runnable
