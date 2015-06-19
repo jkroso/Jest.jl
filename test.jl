@@ -4,13 +4,21 @@
 # caches modules
 #
 test("suites should group") do
-	@assert 1 == 1
-	test("and should themselves be nestable") do
-		@assert 2 == 2
-	end
-	@assert 3 == 3
+  @assert 1 == 1
+  test("and should themselves be nestable") do
+    @assert 2 == 2
+  end
+  @assert 3 == 3
+  @assert isa(@catch(error("boom")), ErrorException)
+  @assert_throws error("boom")
 end
 
 test("failures") do
-	@assert false
+  @assert true
+  test("can come from nested tests") do
+    @assert true
+    @assert false
+  end
 end
+
+@assert 1 == 1

@@ -2,7 +2,7 @@
 
 import DocOpt: docopt
 @require ".." test reporter @assert @assert_throws @catch
-@require "emitter" Events on emit
+@require "emitter" on emit
 
 const usage = """
 

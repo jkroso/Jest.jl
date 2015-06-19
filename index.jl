@@ -14,6 +14,9 @@ end
 const stack = Test[]
 const reporter = Events()
 
+##
+# Run a grouping of tests/assertions
+#
 function test(body::Function, title::String)
   push!(stack, Test(title, Test[]))
   full_title = map(t -> t.title, stack)
@@ -27,6 +30,9 @@ function test(body::Function, title::String)
   result
 end
 
+##
+# Run an assertion returning a `Result`
+#
 function assert(body::Function, title::String)
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
@@ -82,18 +88,20 @@ end
 #
 test("suites should group") do
   @assert 1 == 1
-	test("and should themselves be nestable") do
-		@assert 2 == 2
-	end
-	@assert 3 == 3
+  test("and should themselves be nestable") do
+    @assert 2 == 2
+  end
+  @assert 3 == 3
+  @assert isa(@catch(error("boom")), ErrorException)
+  @assert_throws error("boom")
 end
 
 test("failures") do
   @assert true
   test("can come from nested tests") do
     @assert true
-		@assert false
-	end
+    @assert false
+  end
 end
 
 @assert 1 == 1
