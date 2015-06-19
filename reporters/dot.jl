@@ -33,7 +33,7 @@ const reporter = {
 
     print("$RESET")
   end,
-  "after test" => function(result)
+  "after assertion" => function(result)
     push!(results, result)
     if result.pass
       print("$(GREEN).$(RESET)")

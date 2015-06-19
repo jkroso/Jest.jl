@@ -6,7 +6,7 @@ dependencies: dependencies.json
 	@ln -sfn .. $@/jest
 
 test: dependencies
-	@bin/jest test.jl
+	@bin/jest test.jl --reporter dot
 
 install: dependencies
 	mkdir -p $(PREFIX)/bin

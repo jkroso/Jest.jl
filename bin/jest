@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 
-@require ".." suite test reporter @test @test_throws
-@require "docopt/src/DocOpt" docopt
+import DocOpt: docopt
+@require ".." test reporter @assert @assert_throws @catch
 @require "emitter" Events on emit
 
 const usage = """
@@ -18,7 +18,7 @@ Options:
 
 """
 
-args = docopt(usage, version="0.0.0")
+args = docopt(usage, version=v"0.0.0")
 
 
 if args["--reporter"] == nothing
@@ -26,9 +26,8 @@ if args["--reporter"] == nothing
 end
 
 handlers = args["--reporter"]
-handlers = Requirer.require("../reporters/$handlers").reporter
 
-on(reporter, handlers)
+on(reporter, Requirer.require("../reporters/$handlers").reporter)
 
 fails = 0
 
@@ -42,9 +41,9 @@ try
   for file in args["<file>"]
     file = joinpath(pwd(), file)
     Requirer.require(file; [
-      symbol("@test_throws") => eval(symbol("@test_throws")),
-      symbol("@test") => eval(symbol("@test")),
-      :suite => suite,
+      symbol("@assert_throws") => eval(symbol("@assert_throws")),
+      symbol("@assert") => eval(symbol("@assert")),
+      symbol("@catch") => eval(symbol("@catch")),
       :test => test
     ]...)
   end
