@@ -26,8 +26,8 @@ end
 # Run a grouping of tests/assertions
 #
 function test(body::Function, title::String)
-  # Hack to enable running files with embedded before
-  # some of the code they test is defined
+  # Hack to enable running files with embedded tests
+  # Tests need to wait for the code they test to be defined
   ready || return push!(deferred_tests, @task test(body, title))
 
   push!(stack, Test(title, Test[]))
@@ -85,4 +85,13 @@ Base.writemime(io::IO, ::MIME"text/html", r::Result) = begin
   css = "padding:1px 5px;font-size:14px;color:$(r.pass ? "rgb(0, 226, 0)" : "red");"
   text = "$(r.pass ? '✓' : '✗') $(int(r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")
+end
+
+##
+# With iJulia its common for the REPL to receive a large initial
+# dump of code immediatly which may include some tests so we need
+# to make sure those tests aren't run immediatly
+#
+if isinteractive()
+  @schedule begin sleep(0.1); run_tests() end
 end
