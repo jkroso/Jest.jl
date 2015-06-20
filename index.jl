@@ -14,10 +14,21 @@ end
 const stack = Test[]
 const reporter = Events()
 
+const ready = @async sleep(0.5)
+const deferred_tests = Task[]
+
 ##
 # Run a grouping of tests/assertions
 #
 function test(body::Function, title::String)
+  # Hack to enable running files with embedded before
+  # some of the code they test is defined
+  if ready.state != :done
+    task = @async begin wait(ready); test(body, title) end
+    push!(deferred_tests, task)
+    return task
+  end
+
   push!(stack, Test(title, Test[]))
   full_title = map(t -> t.title, stack)
   emit(reporter, "before test", full_title)
@@ -34,6 +45,7 @@ end
 # Run an assertion returning a `Result`
 #
 function assert(body::Function, title::String)
+  ready.state == :done || return
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
   time = @elapsed ok = body()
@@ -82,28 +94,3 @@ Base.writemime(io::IO, ::MIME"text/html", r::Result) = begin
   text = "$(r.pass ? '✓' : '✗') $(int(r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")
 end
-
-##
-# Embedded test suite
-#
-test("suites should group") do
-  @assert 1 == 1
-  test("and should themselves be nestable") do
-    @assert 2 == 2
-  end
-  @assert 3 == 3
-  @assert isa(@catch(error("boom")), ErrorException)
-  @assert_throws error("boom")
-end
-
-test("failures") do
-  @assert true
-  test("can come from nested tests") do
-    @assert true
-    @assert false
-  end
-end
-
-@assert 1 == 1
-@assert 1 == 1
-@assert 1 == 1
