@@ -70,7 +70,7 @@ macro catch(expr)
       catch e
         return e
       end
-      error("did not throw and error")
+      error("did not throw an error")
     end)()
   end
 end
