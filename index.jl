@@ -19,7 +19,7 @@ global ready = false
 
 function run_tests()
   global ready = true
-  map(yieldto, deferred_tests)
+  map(consume, deferred_tests)
   empty!(deferred_tests)
 end
 
