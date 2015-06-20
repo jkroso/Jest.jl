@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 
 import DocOpt: docopt
-@require ".." test reporter deferred_tests @assert @assert_throws @catch
+@require ".." test reporter deferred_tests @assert @catch
 @require "emitter" on emit
 
 const usage = """
@@ -41,7 +41,6 @@ try
   for file in args["<file>"]
     file = joinpath(pwd(), file)
     Requirer.require(file; [
-      symbol("@assert_throws") => eval(symbol("@assert_throws")),
       symbol("@assert") => eval(symbol("@assert")),
       symbol("@catch") => eval(symbol("@catch")),
       :test => test
@@ -51,6 +50,7 @@ try
   for task in deferred_tests
     wait(task)
   end
+
   emit(reporter, "after all")
 catch e
   emit(reporter, "error", e)

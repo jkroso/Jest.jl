@@ -10,7 +10,6 @@ test("suites should group") do
   end
   @assert 3 == 3
   @assert isa(@catch(error("boom")), ErrorException)
-  @assert_throws error("boom")
 end
 
 test("failures") do

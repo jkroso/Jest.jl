@@ -59,26 +59,16 @@ macro assert(expr)
   :(assert(@thunk($(esc(expr))), $(repr(expr))))
 end
 
-macro assert_throws(expr)
-  quote
-    assert($(repr(expr))) do
-      try
-        $(esc(expr))
-        false
-      catch e
-        true
-      end
-    end
-  end
-end
-
 macro catch(expr)
   quote
-    try
-      $(esc(expr))
-    catch e
-      e
-    end
+    @thunk(begin
+      try
+        $(esc(expr))
+      catch e
+        return e
+      end
+      error("did not throw and error")
+    end)()
   end
 end
 
