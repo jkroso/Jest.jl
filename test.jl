@@ -4,7 +4,7 @@
 # caches modules
 #
 test("suites should group") do
-  @assert 1 == 1
+  @assert a == 1
   test("and should themselves be nestable") do
     @assert 2 == 2
   end
@@ -20,4 +20,5 @@ test("failures") do
   end
 end
 
-@assert 1 == 1
+@assert a == 1
+a = 1

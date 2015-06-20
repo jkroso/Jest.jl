@@ -14,8 +14,13 @@ end
 const stack = Test[]
 const reporter = Events()
 
-const ready = @async sleep(0.5)
 const deferred_tests = Task[]
+global ready = false
+
+function run_tests()
+  global ready = true
+  map(yieldto, deferred_tests)
+end
 
 ##
 # Run a grouping of tests/assertions
@@ -23,11 +28,7 @@ const deferred_tests = Task[]
 function test(body::Function, title::String)
   # Hack to enable running files with embedded before
   # some of the code they test is defined
-  if ready.state != :done
-    task = @async begin wait(ready); test(body, title) end
-    push!(deferred_tests, task)
-    return task
-  end
+  ready || return push!(deferred_tests, @task test(body, title))
 
   push!(stack, Test(title, Test[]))
   full_title = map(t -> t.title, stack)
@@ -45,7 +46,8 @@ end
 # Run an assertion returning a `Result`
 #
 function assert(body::Function, title::String)
-  ready.state == :done || return
+  ready || return push!(deferred_tests, @task assert(body, title))
+
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
   time = @elapsed ok = body()

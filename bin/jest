@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 
 import DocOpt: docopt
-@require ".." test reporter deferred_tests @assert @catch
+@require ".." test reporter run_tests @assert @catch
 @require "emitter" on emit
 
 const usage = """
@@ -47,9 +47,7 @@ try
     ]...)
   end
 
-  for task in deferred_tests
-    wait(task)
-  end
+  run_tests()
 
   emit(reporter, "after all")
 catch e
