@@ -27,6 +27,8 @@ end
 # Run a grouping of tests/assertions
 #
 function test(body::Function, title::String)
+  # Hack to prevent running tests in 3rd party modules
+  @dirname() == pwd() || current_module() == Main || return
   # Hack to enable running files with embedded tests
   # Tests need to wait for the code they test to be defined
   ready || return push!(deferred_tests, @task test(body, title))
@@ -47,6 +49,7 @@ end
 # Run an assertion returning a `Result`
 #
 function assert(body::Function, title::String)
+  @dirname() == pwd() || current_module() == Main || return
   ready || return push!(deferred_tests, @task assert(body, title))
 
   full_title = vcat(map(t -> t.title, stack), title)
