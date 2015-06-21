@@ -96,3 +96,13 @@ end
 if isinteractive()
   @schedule begin sleep(0.1); run_tests() end
 end
+
+##
+# Add Jest's API to the global scope
+#
+Base.eval(quote
+  $(symbol("@assert")) = $(eval(symbol("@assert")))
+  $(symbol("@catch")) = $(eval(symbol("@catch")))
+  test = $test
+  export test, @assert, @catch
+end)
