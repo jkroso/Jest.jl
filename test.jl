@@ -1,7 +1,7 @@
 ##
 # Normally the tests would be embedded with the code it tests
-# but in this case they need to be seperate due to the way Requirer
-# caches modules
+# but in this case they need to be seperate so they don't get
+# run every time Jest is used
 #
 test("suites should group") do
   @assert a == 1
