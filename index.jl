@@ -6,12 +6,12 @@ type Result
   pass::Bool
 end
 
-type Test
+type Suite
   title::String
   results::Vector{Result}
 end
 
-const stack = Test[]
+const stack = Suite[]
 const reporter = Events()
 
 const deferred_tests = Task[]
@@ -24,7 +24,7 @@ function run_tests()
 end
 
 ##
-# Run a grouping of tests/assertions
+# Run a suite of tests and sub-suites
 #
 function test(body::Function, title::String)
   # Hack to prevent running tests in 3rd party modules
@@ -33,7 +33,7 @@ function test(body::Function, title::String)
   # Tests need to wait for the code they test to be defined
   ready || return push!(deferred_tests, @task test(body, title))
 
-  push!(stack, Test(title, Test[]))
+  push!(stack, Suite(title, Result[]))
   full_title = map(t -> t.title, stack)
   emit(reporter, "before test", full_title)
   time = @elapsed(body())
@@ -61,7 +61,7 @@ function assert(body::Function, title::String)
   result
 end
 
-macro assert(expr)
+macro test(expr)
   :(assert(@thunk($(esc(expr))), $(repr(expr))))
 end
 
@@ -104,8 +104,8 @@ end
 # Add Jest's API to the global scope
 #
 Base.eval(quote
-  $(symbol("@assert")) = $(eval(symbol("@assert")))
+  $(symbol("@test")) = $(eval(symbol("@test")))
   $(symbol("@catch")) = $(eval(symbol("@catch")))
   test = $test
-  export test, @assert, @catch
+  export test, @test, @catch
 end)
