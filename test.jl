@@ -12,6 +12,8 @@ test("suites should group") do
   @test isa(@catch(error("boom")), ErrorException)
 end
 
+@test a == 1
+
 test("failures") do
   @test true
   test("can come from nested tests") do
