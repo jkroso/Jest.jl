@@ -68,11 +68,7 @@ end
 macro catch(expr)
   quote
     @thunk(begin
-      try
-        $(esc(expr))
-      catch e
-        return e
-      end
+      try $(esc(expr)) catch e return e end
       error("did not throw an error")
     end)()
   end
