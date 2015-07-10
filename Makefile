@@ -1,16 +1,13 @@
+PREFIX?=/usr/local/bin
 
-PREFIX?=/usr/local
-
-dependencies: dependencies.json
-	@packin install --folder $@ --meta $<
-	@ln -sfn .. $@/jest
+dependencies: bin/jest.jl
+	@kip $<
 
 test: dependencies
-	@bin/jest test.jl --reporter dot
+	@bin/jest.jl test.jl --reporter dot
 
 install: dependencies
-	mkdir -p $(PREFIX)/bin
-	ln -sf $$PWD/bin/jest $(PREFIX)/bin/jest
+	ln -sf $(PWD)/bin/jest.jl $(PREFIX)/jest
 
 uninstall:
 	rm -f $(PREFIX)/bin/jest

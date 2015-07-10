@@ -1,4 +1,4 @@
-@require "emitter" Events emit
+@require "jkroso/emitter.jl" Events emit
 
 type Result
   title::Vector{String}

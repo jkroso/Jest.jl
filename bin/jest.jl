@@ -1,8 +1,8 @@
 #!/usr/bin/env julia
 
 import DocOpt: docopt
+@require "jkroso/emitter.jl" on emit
 @require ".." reporter run_tests
-@require "emitter" on emit
 
 const usage = """
 
@@ -31,7 +31,7 @@ on(reporter, Requirer.require("../reporters/$handlers").reporter)
 
 fails = 0
 
-on(reporter, "after test") do result
+on(reporter, "after assertion") do result
   global fails += !result.pass
 end
 
