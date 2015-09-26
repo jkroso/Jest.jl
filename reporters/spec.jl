@@ -4,9 +4,9 @@ const RESET = "\x1b[33m"
 level = 0
 last_type = :none
 
-render(msg::String) = println(" " ^ (level * 2 + 1), msg)
+render(msg::AbstractString) = println(" " ^ (level * 2 + 1), msg)
 
-const reporter = {
+const reporter = Dict(
   "before all" => function()
     println(RESET)
   end,
@@ -31,4 +31,4 @@ const reporter = {
       render("$(RED)✗$RESET $(result.title[end])")
     end
   end
-}
+)

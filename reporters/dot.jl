@@ -2,9 +2,9 @@ const RED   = "\x1b[31m"
 const GREEN = "\x1b[32m"
 const GRAY = "\x1b[33m"
 const RESET = "\x1b[0m"
-const results = {}
+const results = []
 
-const reporter = {
+const reporter = Dict(
   "before all" => function()
     print("\n   ")
   end,
@@ -23,9 +23,9 @@ const reporter = {
     passes > 0 && print("$GREEN $passes passing")
     failures > 0 && print("$RED $failures failing")
     time = reduce((n,r) -> n + r.time, 0, results)
-    println("$GRAY ($(int(time * 1000))ms)\n")
+    println("$GRAY ($(round(Int, time * 1000))ms)\n")
 
-    for i in [1:length(fails)]
+    for i in eachindex(fails)
       title = join(fails[i].title, ' ')
       println("$GRAY   $i)$RED $title")
     end
@@ -45,4 +45,4 @@ const reporter = {
     println(RESET)
     println()
   end
-}
+)

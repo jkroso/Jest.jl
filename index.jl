@@ -1,13 +1,13 @@
 @require "jkroso/emitter.jl" Events emit
 
 type Result
-  title::Vector{String}
-  time::FloatingPoint
+  title::Vector{AbstractString}
+  time::AbstractFloat
   pass::Bool
 end
 
 type Suite
-  title::String
+  title::AbstractString
   results::Vector{Result}
 end
 
@@ -26,7 +26,7 @@ end
 ##
 # Run a suite of tests and sub-suites
 #
-function test(body::Function, title::String)
+function test(body::Function, title::AbstractString)
   # Hack to prevent running tests in 3rd party modules
   @dirname() == pwd() || current_module() == Main || return
   # Hack to enable running files with embedded tests
@@ -48,7 +48,7 @@ end
 ##
 # Run an assertion returning a `Result`
 #
-function assert(body::Function, title::String)
+function assert(body::Function, title::AbstractString)
   @dirname() == pwd() || current_module() == Main || return
   ready || return push!(deferred_tests, @task assert(body, title))
 
@@ -62,12 +62,12 @@ function assert(body::Function, title::String)
 end
 
 macro test(expr)
-  :(assert(@thunk($(esc(expr))), $(repr(expr))))
+  :(assert(function() $(esc(expr)) end, $(repr(expr))))
 end
 
 macro catch(expr)
   quote
-    @thunk(begin
+    (function()
       try $(esc(expr)) catch e return e end
       error("did not throw an error")
     end)()
