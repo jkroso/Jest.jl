@@ -1,12 +1,9 @@
 PREFIX?=/usr/local/bin
 
-dependencies: bin/jest.jl
-	@kip $<
-
-test: dependencies
+test:
 	@bin/jest.jl test.jl --reporter dot
 
-install: dependencies
+install:
 	ln -sf $(PWD)/bin/jest.jl $(PREFIX)/jest
 
 uninstall:

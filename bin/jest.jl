@@ -1,7 +1,6 @@
 #!/usr/bin/env julia
-
-import DocOpt: docopt
-@require "jkroso/emitter.jl" on emit
+@require "github.com/docopt/DocOpt.jl" docopt
+@require "github.com/jkroso/emitter.jl" on emit
 @require ".." reporter run_tests
 
 const usage = """
@@ -20,14 +19,14 @@ Options:
 
 args = docopt(usage, version=v"0.0.0")
 
-
 if args["--reporter"] == nothing
   args["--reporter"] = "dot"
 end
 
 handlers = args["--reporter"]
 
-on(reporter, Requirer.require("../reporters/$handlers").reporter)
+# mixin event handlers
+on(reporter, Kip.require("../reporters/$handlers").reporter)
 
 fails = 0
 
@@ -39,7 +38,7 @@ emit(reporter, "before all")
 
 try
   for file in args["<file>"]
-    Requirer.require(joinpath(pwd(), file))
+    Kip.require(joinpath(pwd(), file))
   end
 
   run_tests()
