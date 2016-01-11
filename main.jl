@@ -100,8 +100,8 @@ end
 # Add Jest's API to the global scope
 #
 Base.eval(quote
-  $(symbol("@test")) = $(eval(symbol("@test")))
-  $(symbol("@catch")) = $(eval(symbol("@catch")))
-  test = $test
+  const $(symbol("@test")) = $(eval(symbol("@test")))
+  const $(symbol("@catch")) = $(eval(symbol("@catch")))
+  const test = $test
   export test, @test, @catch
 end)
