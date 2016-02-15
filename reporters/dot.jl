@@ -1,6 +1,5 @@
 const RED   = "\x1b[31m"
 const GREEN = "\x1b[32m"
-const GRAY = "\x1b[33m"
 const RESET = "\x1b[0m"
 const results = []
 
@@ -23,11 +22,11 @@ const reporter = Dict(
     passes > 0 && print("$GREEN $passes passing")
     failures > 0 && print("$RED $failures failing")
     time = reduce((n,r) -> n + r.time, 0, results)
-    println("$GRAY ($(round(Int, time * 1000))ms)\n")
+    println("$RESET ($(round(Int, time * 1000))ms)\n")
 
     for i in eachindex(fails)
       title = join(fails[i].title, ' ')
-      println("$GRAY   $i)$RED $title")
+      println("$RESET   $i)$RED $title")
     end
     failures > 0 && println()
 
