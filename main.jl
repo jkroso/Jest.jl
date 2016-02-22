@@ -48,9 +48,9 @@ end
 ##
 # Run an assertion returning a `Result`
 #
-function assert(body::Function, title::AbstractString)
+function assertion(body::Function, title::AbstractString)
   @dirname() == pwd() || current_module() == Main || return
-  ready || return push!(deferred_tests, @task assert(body, title))
+  ready || return push!(deferred_tests, @task assertion(body, title))
 
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
@@ -62,7 +62,7 @@ function assert(body::Function, title::AbstractString)
 end
 
 macro test(expr)
-  :(assert(function() $(esc(expr)) end, $(repr(expr))))
+  :(assertion(function() $(esc(expr)) end, $(repr(expr))))
 end
 
 macro catch(expr)
@@ -96,12 +96,4 @@ if isinteractive()
   @schedule begin sleep(0.1); run_tests() end
 end
 
-##
-# Add Jest's API to the global scope
-#
-Base.eval(quote
-  const $(symbol("@test")) = $(eval(symbol("@test")))
-  const $(symbol("@catch")) = $(eval(symbol("@catch")))
-  const test = $test
-  export test, @test, @catch
-end)
+export test, @test, @catch
