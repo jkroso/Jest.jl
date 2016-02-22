@@ -23,9 +23,9 @@ function run_tests()
   empty!(deferred_tests)
 end
 
-##
-# Run a suite of tests and sub-suites
-#
+"""
+Run a suite of tests and sub-suites
+"""
 function test(body::Function, title::AbstractString)
   # Hack to prevent running tests in 3rd party modules
   @dirname() == pwd() || current_module() == Main || return
@@ -45,9 +45,9 @@ function test(body::Function, title::AbstractString)
   result
 end
 
-##
-# Run an assertion returning a `Result`
-#
+"""
+Run an assertion returning a `Result`
+"""
 function assertion(body::Function, title::AbstractString)
   @dirname() == pwd() || current_module() == Main || return
   ready || return push!(deferred_tests, @task assertion(body, title))
@@ -61,10 +61,18 @@ function assertion(body::Function, title::AbstractString)
   result
 end
 
+"""
+Define an assertion from an expression
+"""
 macro test(expr)
   :(assertion(function() $(esc(expr)) end, $(repr(expr))))
 end
 
+"""
+Catch a value you expect to be thrown an return it insead so you
+can run assertions on it. If the expression does not throw then
+an error is raised
+"""
 macro catch(expr)
   quote
     (function()
