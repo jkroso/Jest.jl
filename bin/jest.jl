@@ -1,7 +1,7 @@
 #!/usr/bin/env julia
 @require "github.com/docopt/DocOpt.jl" docopt
 @require "github.com/jkroso/emitter.jl" on emit
-@require ".." reporter run_tests
+@require ".." => Jest
 
 const usage = """
 
@@ -26,26 +26,30 @@ end
 handlers = args["--reporter"]
 
 # mixin event handlers
-on(reporter, Kip.require("../reporters/$handlers").reporter)
+on(Jest.reporter, Kip.require("../reporters/$handlers").reporter)
 
 fails = 0
 
-on(reporter, "after assertion") do result
+on(Jest.reporter, "after assertion") do result
   global fails += !result.pass
 end
 
-emit(reporter, "before all")
+emit(Jest.reporter, "before all")
+
+const env = Dict(symbol("test") => Jest.(symbol("test")),
+                 symbol("@test") => Jest.(symbol("@test")),
+                 symbol("@catch") => Jest.(symbol("@catch")))
 
 try
   for file in args["<file>"]
-    Kip.require(joinpath(pwd(), file))
+    Kip.require(joinpath(pwd(), file); env...)
   end
 
-  run_tests()
+  Jest.run_tests()
 
-  emit(reporter, "after all")
+  emit(Jest.reporter, "after all")
 catch e
-  emit(reporter, "error", e)
+  emit(Jest.reporter, "error", e)
   rethrow(e)
 end
 
