@@ -100,8 +100,6 @@ end
 # dump of code immediatly which may include some tests so we need
 # to make sure those tests aren't run immediatly
 #
-if isinteractive()
-  @schedule begin sleep(0.1); run_tests() end
-end
+isinteractive() && @schedule (sleep(0); run_tests())
 
 export test, @test, @catch
