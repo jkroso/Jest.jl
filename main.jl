@@ -54,7 +54,7 @@ function assertion(body::Function, title::AbstractString)
 
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
-  time = @elapsed ok = body()
+  time = @elapsed ok = body()::Bool
   result = Result(full_title, time, ok)
   isempty(stack) || push!(stack[end].results, result)
   emit(reporter, "after assertion", result)
