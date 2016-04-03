@@ -28,7 +28,7 @@ Run a suite of tests and sub-suites
 """
 function test(body::Function, title::AbstractString)
   # Hack to prevent running tests in 3rd party modules
-  @dirname() == pwd() || current_module() == Main || return
+  startswith(@dirname(), pwd()) || current_module() == Main || return
   # Hack to enable running files with embedded tests
   # Tests need to wait for the code they test to be defined
   ready || return push!(deferred_tests, @task test(body, title))
@@ -49,7 +49,7 @@ end
 Run an assertion returning a `Result`
 """
 function assertion(body::Function, title::AbstractString)
-  @dirname() == pwd() || current_module() == Main || return
+  startswith(@dirname(), pwd()) || current_module() == Main || return
   ready || return push!(deferred_tests, @task assertion(body, title))
 
   full_title = vcat(map(t -> t.title, stack), title)
