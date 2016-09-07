@@ -85,11 +85,8 @@ end
 ##
 # Handle pretty printing for the REPL etc..
 #
-Base.writemime(io::IO, ::MIME"text/plain", r::Result) = begin
-  write(io, "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms")
-end
-
-Base.writemime(io::IO, ::MIME"text/html", r::Result) = begin
+Base.show(io::IO, r::Result) = write(io, "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms")
+Base.show(io::IO, ::MIME"text/html", r::Result) = begin
   css = "padding:1px 5px;font-size:14px;color:$(r.pass ? "rgb(0, 226, 0)" : "red");"
   text = "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")

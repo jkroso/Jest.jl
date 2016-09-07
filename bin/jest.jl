@@ -36,9 +36,9 @@ end
 
 emit(Jest.reporter, "before all")
 
-const env = Dict(symbol("test") => Jest.(symbol("test")),
-                 symbol("@test") => Jest.(symbol("@test")),
-                 symbol("@catch") => Jest.(symbol("@catch")))
+const env = Dict(Symbol("test") => getfield(Jest, Symbol("test")),
+                 Symbol("@test") => getfield(Jest, Symbol("@test")),
+                 Symbol("@catch") => getfield(Jest, Symbol("@catch")))
 
 try
   for file in args["<file>"]
