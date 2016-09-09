@@ -26,12 +26,12 @@ end
 """
 Run a suite of tests and sub-suites
 """
-function test(body::Function, title::AbstractString)
+function testset(body::Function, title::AbstractString)
   # Hack to prevent running tests in 3rd party modules
   startswith(@dirname(), pwd()) || current_module() == Main || return
   # Hack to enable running files with embedded tests
   # Tests need to wait for the code they test to be defined
-  ready || return push!(deferred_tests, @task test(body, title))
+  ready || return push!(deferred_tests, @task testset(body, title))
 
   push!(stack, Suite(title, Result[]))
   full_title = map(t -> t.title, stack)
@@ -99,4 +99,4 @@ end
 #
 isinteractive() && @schedule (sleep(0); run_tests())
 
-export test, @test, @catch
+export testset, @test, @catch

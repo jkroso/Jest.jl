@@ -36,7 +36,7 @@ end
 
 emit(Jest.reporter, "before all")
 
-const env = Dict(Symbol("test") => getfield(Jest, Symbol("test")),
+const env = Dict(Symbol("testset") => getfield(Jest, Symbol("test")),
                  Symbol("@test") => getfield(Jest, Symbol("@test")),
                  Symbol("@catch") => getfield(Jest, Symbol("@catch")))
 
