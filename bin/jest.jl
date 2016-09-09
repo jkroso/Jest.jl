@@ -1,6 +1,6 @@
 #!/usr/bin/env julia
+@require "github.com/jkroso/Emitter.jl" on emit
 @require "github.com/docopt/DocOpt.jl" docopt
-@require "github.com/jkroso/emitter.jl" on emit
 @require ".." => Jest
 
 const usage = """
