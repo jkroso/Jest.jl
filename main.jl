@@ -1,12 +1,12 @@
 @require "github.com/jkroso/Emitter.jl" Events emit
 
-type Result
+immutable Result
   title::Vector{AbstractString}
   time::AbstractFloat
   pass::Bool
 end
 
-type Suite
+immutable Suite
   title::AbstractString
   results::Vector{Result}
 end
