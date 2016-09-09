@@ -34,18 +34,16 @@ on(Jest.reporter, "after assertion") do result
   global fails += !result.pass
 end
 
-emit(Jest.reporter, "before all")
-
-const env = Dict(Symbol("testset") => getfield(Jest, Symbol("test")),
+const env = Dict(Symbol("testset") => getfield(Jest, Symbol("testset")),
                  Symbol("@test") => getfield(Jest, Symbol("@test")),
                  Symbol("@catch") => getfield(Jest, Symbol("@catch")))
 
 try
+  emit(Jest.reporter, "before all")
+
   for file in args["<file>"]
     Kip.require(joinpath(pwd(), file); env...)
   end
-
-  Jest.run_tests()
 
   emit(Jest.reporter, "after all")
 catch e

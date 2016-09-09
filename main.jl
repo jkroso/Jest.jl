@@ -11,29 +11,14 @@ type Suite
   results::Vector{Result}
 end
 
-const stack = Suite[]
+const stack = Vector{Suite}()
 const reporter = Events()
-
-const deferred_tests = Task[]
-global ready = false
-
-function run_tests()
-  global ready = true
-  map(consume, deferred_tests)
-  empty!(deferred_tests)
-end
 
 """
 Run a suite of tests and sub-suites
 """
 function testset(body::Function, title::AbstractString)
-  # Hack to prevent running tests in 3rd party modules
-  startswith(@dirname(), pwd()) || current_module() == Main || return
-  # Hack to enable running files with embedded tests
-  # Tests need to wait for the code they test to be defined
-  ready || return push!(deferred_tests, @task testset(body, title))
-
-  push!(stack, Suite(title, Result[]))
+  push!(stack, Suite(title, []))
   full_title = map(t -> t.title, stack)
   emit(reporter, "before test", full_title)
   time = @elapsed(body())
@@ -49,9 +34,6 @@ end
 Run an assertion returning a `Result`
 """
 function assertion(body::Function, title::AbstractString)
-  startswith(@dirname(), pwd()) || current_module() == Main || return
-  ready || return push!(deferred_tests, @task assertion(body, title))
-
   full_title = vcat(map(t -> t.title, stack), title)
   emit(reporter, "before assertion", full_title)
   time = @elapsed ok = body()::Bool
@@ -91,12 +73,5 @@ Base.show(io::IO, ::MIME"text/html", r::Result) = begin
   text = "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")
 end
-
-##
-# With iJulia its common for the REPL to receive a large initial
-# dump of code immediatly which may include some tests so we need
-# to make sure those tests aren't run immediatly
-#
-isinteractive() && @schedule (sleep(0); run_tests())
 
 export testset, @test, @catch
