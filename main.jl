@@ -1,4 +1,5 @@
 @require "github.com/jkroso/Emitter.jl" Events emit
+@require "github.com/JunoLab/Juno.jl" => Juno
 
 immutable Result
   title::Vector{AbstractString}
@@ -69,9 +70,14 @@ end
 #
 Base.show(io::IO, r::Result) = write(io, "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms")
 Base.show(io::IO, ::MIME"text/html", r::Result) = begin
-  css = "padding:1px 5px;font-size:14px;color:$(r.pass ? "rgb(0, 226, 0)" : "red");"
+  css = "color:$(r.pass ? "rgb(0, 226, 0)" : "red");"
   text = "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")
 end
+
+##
+# Hook into Juno's rendering system
+#
+Juno.render(::Juno.Inline, x::Result) = Juno.view(x)
 
 export testset, @test, @catch
