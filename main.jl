@@ -1,13 +1,13 @@
 @require "github.com/jkroso/Emitter.jl" Events emit
 @require "github.com/JunoLab/Juno.jl" => Juno
 
-immutable Result
+struct Result
   title::Vector{AbstractString}
   time::AbstractFloat
   pass::Bool
 end
 
-immutable Suite
+struct Suite
   title::AbstractString
   results::Vector{Result}
 end
