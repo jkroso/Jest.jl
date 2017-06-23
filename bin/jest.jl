@@ -1,32 +1,17 @@
 #!/usr/bin/env julia
 @require "github.com/jkroso/Emitter.jl" on emit
-@require "github.com/docopt/DocOpt.jl" docopt
+@require "github.com/jkroso/SimpleCLI.jl" @CLI
 @require ".." => Jest
 
-const usage = """
-
-Usage:
-  jest [--reporter=<name>] <file>...
-  jest -h | --help
-  jest -v | --version
-
-Options:
-  -h --help     Show this screen
-  -v --version  Show version
-  -r --reporter Select a custom reporter
-
 """
-
-args = docopt(usage, version=v"0.0.0")
-
-if args["--reporter"] == nothing
-  args["--reporter"] = "dot"
-end
-
-handlers = args["--reporter"]
+Run the tests contained in <files> reporting the results with <reporter>.
+You don't need to `@require` Jest in your test files since it will be injected
+for you.
+"""
+@CLI (files::String...; reporter::String="dot")
 
 # mixin event handlers
-on(Jest.reporter, Kip.require("../reporters/$handlers").reporter)
+on(Jest.reporter, Kip.require("../reporters/$reporter").reporter)
 
 fails = 0
 
@@ -41,7 +26,7 @@ const env = Dict(Symbol("testset") => getfield(Jest, Symbol("testset")),
 try
   emit(Jest.reporter, "before all")
 
-  for file in args["<file>"]
+  for file in files
     Kip.require(joinpath(pwd(), file); env...)
   end
 
