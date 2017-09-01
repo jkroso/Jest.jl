@@ -1,17 +1,16 @@
 #!/usr/bin/env julia
 @require "github.com/jkroso/Emitter.jl" on emit
 @require "github.com/jkroso/SimpleCLI.jl" @CLI
-@require ".." => Jest
+@require ".." => Jest assertion testset
 
 """
-Run the tests contained in <files> reporting the results with <reporter>.
-You don't need to `@require` Jest in your test files since it will be injected
-for you.
+Run the tests contained in <files> reporting the results with <writer>
 """
-@CLI (files::String...; reporter::String="dot")
+@CLI (files::String...; writer::String="dot",
+                        reader::String="inject")
 
 # mixin event handlers
-on(Jest.reporter, Kip.require("../reporters/$reporter").reporter)
+on(Jest.reporter, Kip.require("../reporters/$writer").reporter)
 
 fails = 0
 
@@ -23,11 +22,30 @@ const env = Dict(Symbol("testset") => getfield(Jest, Symbol("testset")),
                  Symbol("@test") => getfield(Jest, Symbol("@test")),
                  Symbol("@catch") => getfield(Jest, Symbol("@catch")))
 
+read_testfile(file, ::Val{:basic}) = Kip.require(file)
+read_testfile(file, ::Val{:inject}) = Kip.require(file; env...)
+read_testfile(file, ::Val{:comments}) = begin
+  m = Kip.require(file)
+  test_comment = r"[ \t]*# (.+)"
+  tests = []
+  for (i, line) ∈ enumerate(eachline(file))
+    ismatch(test_comment, line) || continue
+    str = match(test_comment, line)[1]
+    code = try parse(str) catch continue end
+    push!(tests, :($(Jest.assertion)($str) do
+      $(Expr(:line, i, Symbol(file)))
+      $(code)
+    end))
+  end
+  isempty(tests) && return
+  eval(m, :($(Jest.testset)(()->begin $(tests...) end, $(relpath(file)))))
+end
+
 try
   emit(Jest.reporter, "before all")
 
   for file in files
-    Kip.require(joinpath(pwd(), file); env...)
+    read_testfile(joinpath(pwd(), file), Val(Symbol(reader)))
   end
 
   emit(Jest.reporter, "after all")

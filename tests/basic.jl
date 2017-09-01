@@ -1,3 +1,6 @@
+#! jest tests/basic.jl -r basic
+@require ".." testset @test @catch
+
 a = 1
 
 testset("suites should group") do
