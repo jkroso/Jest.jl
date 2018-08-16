@@ -31,7 +31,7 @@ read_testfile(file, ::Val{:comments}) = begin
   for (i, line) ∈ enumerate(eachline(file))
     ismatch(test_comment, line) || continue
     str = match(test_comment, line)[1]
-    code = try parse(str) catch continue end
+    code = try parse(str) catch; continue end
     push!(tests, :($(Jest.assertion)($str) do
       $(Expr(:line, i, Symbol(file)))
       $(code)

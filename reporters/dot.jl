@@ -21,7 +21,7 @@ const reporter = Dict(
     print("\n\n  ")
     passes > 0 && print("$GREEN $passes passing")
     failures > 0 && print("$RED $failures failing")
-    time = reduce((n,r) -> n + r.time, 0, results)
+    time = reduce((n,r) -> n + r.time, results, init=0)
     println("$RESET ($(round(Int, time * 1000))ms)\n")
 
     for i in eachindex(fails)

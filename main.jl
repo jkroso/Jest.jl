@@ -51,12 +51,7 @@ macro test(expr)
   :(assertion(function() $(esc(expr)) end, $(repr(expr))))
 end
 
-"""
-Catch a value you expect to be thrown an return it insead so you
-can run assertions on it. If the expression does not throw then
-an error is raised
-"""
-macro catch(expr)
+@eval macro $(:catch)(expr)
   quote
     (function()
       try $(esc(expr)) catch e return e end

@@ -1,4 +1,4 @@
-#! jest tests/basic.jl -r basic
+#! jest tests/basic.jl -r basic -w dot
 @require ".." testset @test @catch
 
 a = 1
