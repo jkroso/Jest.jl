@@ -1,5 +1,6 @@
 @require "github.com/jkroso/Emitter.jl" Events emit
-@require "github.com/JunoLab/Juno.jl" => Juno
+@require "github.com/jkroso/Rutherford.jl/Juno/main.jl" render
+@require "github.com/jkroso/DOM.jl" @dom @css_str
 
 struct Result
   title::Vector{AbstractString}
@@ -71,8 +72,19 @@ Base.show(io::IO, ::MIME"text/html", r::Result) = begin
 end
 
 ##
-# Hook into Juno's rendering system
+# Hook into Rutherford's rendering system
 #
-Juno.render(::Juno.Inline, x::Result) = Juno.view(x)
+render(r::Result) =
+  @dom[:span class.passed=r.pass
+             css"""
+             &.passed > span:first-child {color: rgb(0, 226, 0)}
+             > span:first-child {color: red; padding-right: 6px}
+             > span:last-child
+               opacity: 0.6
+               > span {font-size: 0.9em; opacity: 0.8}
+             padding: 1px
+             """
+    [:span r.pass ? "✓" : "✗"]
+    [:span round(Int, 1000r.time) [:span "ms"]]]
 
 export testset, @test, @catch
