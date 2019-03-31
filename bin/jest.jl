@@ -29,23 +29,23 @@ read_testfile(file, ::Val{:comments}) = begin
   test_comment = r"[ \t]*# (.+)"
   tests = []
   for (i, line) ∈ enumerate(eachline(file))
-    ismatch(test_comment, line) || continue
+    occursin(test_comment, line) || continue
     str = match(test_comment, line)[1]
-    code = try parse(str) catch; continue end
+    code = try Meta.parse(str) catch; continue end
     push!(tests, :($(Jest.assertion)($str) do
       $(Expr(:line, i, Symbol(file)))
       $(code)
     end))
   end
   isempty(tests) && return
-  eval(m, :($(Jest.testset)(()->begin $(tests...) end, $(relpath(file)))))
+  Core.eval(m, :($(Jest.testset)(()->begin $(tests...) end, $(relpath(file)))))
 end
 
 try
   emit(Jest.reporter, "before all")
 
   for file in files
-    read_testfile(joinpath(pwd(), file), Val(Symbol(reader)))
+    read_testfile(realpath(file), Val(Symbol(reader)))
   end
 
   emit(Jest.reporter, "after all")
