@@ -45,7 +45,8 @@ try
   emit(Jest.reporter, "before all")
 
   for file in files
-    read_testfile(realpath(file), Val(Symbol(reader)))
+    path = realpath(joinpath(pwd(), file))
+    read_testfile(path, Val(Symbol(reader)))
   end
 
   emit(Jest.reporter, "after all")
