@@ -1,5 +1,5 @@
+@require "github.com/jkroso/Rutherford.jl/render.jl" render
 @require "github.com/jkroso/Emitter.jl" Events emit
-@require "github.com/jkroso/Rutherford.jl/Juno/main.jl" render
 @require "github.com/jkroso/DOM.jl" @dom @css_str
 
 struct Result

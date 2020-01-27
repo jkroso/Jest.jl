@@ -1,4 +1,4 @@
-#!/usr/bin/env julia
+#!/usr/bin/env julia --color=yes
 @require "github.com/jkroso/Emitter.jl" on emit
 @require "github.com/jkroso/SimpleCLI.jl" @CLI
 @require ".." => Jest assertion testset
