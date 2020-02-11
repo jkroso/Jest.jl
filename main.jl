@@ -1,6 +1,6 @@
-@require "github.com/jkroso/Rutherford.jl/render.jl" render
-@require "github.com/jkroso/Emitter.jl" Events emit
-@require "github.com/jkroso/DOM.jl" @dom @css_str
+@use "github.com/jkroso/Rutherford.jl/draw.jl" doodle
+@use "github.com/jkroso/Emitter.jl" Events emit
+@use "github.com/jkroso/DOM.jl" @dom @css_str
 
 struct Result
   title::Vector{AbstractString}
@@ -74,7 +74,7 @@ end
 ##
 # Hook into Rutherford's rendering system
 #
-render(r::Result) =
+doodle(r::Result) =
   @dom[:span class.passed=r.pass
              css"""
              &.passed > span:first-child {color: rgb(0, 226, 0)}

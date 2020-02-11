@@ -1,7 +1,7 @@
 #!/usr/bin/env julia --color=yes
-@require "github.com/jkroso/Emitter.jl" on emit
-@require "github.com/jkroso/SimpleCLI.jl" @CLI
-@require ".." => Jest assertion testset
+@use "github.com/jkroso/Emitter.jl" on emit
+@use "github.com/jkroso/SimpleCLI.jl" @CLI
+@use ".." => Jest assertion testset
 
 """
 Run the tests contained in <files> reporting the results with <writer>
