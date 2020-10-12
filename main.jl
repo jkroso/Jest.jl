@@ -1,6 +1,4 @@
-@use "github.com/jkroso/Rutherford.jl/draw.jl" doodle
 @use "github.com/jkroso/Emitter.jl" Events emit
-@use "github.com/jkroso/DOM.jl" @dom @css_str
 
 struct Result
   title::Vector{AbstractString}
@@ -61,30 +59,11 @@ end
   end
 end
 
-##
-# Handle pretty printing for the REPL etc..
-#
 Base.show(io::IO, r::Result) = write(io, "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms")
 Base.show(io::IO, ::MIME"text/html", r::Result) = begin
   css = "color:$(r.pass ? "rgb(0, 226, 0)" : "red");"
   text = "$(r.pass ? '✓' : '✗') $(round(Int, r.time * 1000))ms"
   write(io, "<div style=\"$css\">$text</div>")
 end
-
-##
-# Hook into Rutherford's rendering system
-#
-doodle(r::Result) =
-  @dom[:span class.passed=r.pass
-             css"""
-             &.passed > span:first-child {color: rgb(0, 226, 0)}
-             > span:first-child {color: red; padding-right: 6px}
-             > span:last-child
-               opacity: 0.6
-               > span {font-size: 0.9em; opacity: 0.8}
-             padding: 1px
-             """
-    [:span r.pass ? "✓" : "✗"]
-    [:span round(Int, 1000r.time) [:span "ms"]]]
 
 export testset, @test, @catch
